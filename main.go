@@ -26,6 +26,7 @@ func main() {
 	// Read user input for caption
 	input := bufio.NewScanner(os.Stdin)
 	for input.Scan() {
+		file.Seek(0, 0)
 		lines := bufio.NewScanner(file)
 		for lines.Scan() {
 			if strings.Contains(lines.Text(), input.Text()) {
