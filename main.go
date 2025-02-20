@@ -2,11 +2,14 @@ package main
 
 import (
 	"os"
+	"os/exec"
+	"bytes"
 	"log"
 	"bufio"
 	"fmt"
 	"strings"
 	"regexp"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 /* -- subtitle format --
@@ -17,11 +20,13 @@ you didn't get into Dartmouth.
 */
 
 func main() {
+	//runVideo()
+
 	// regular expression to match timestamp
 	timestampRegex, _ := regexp.Compile("\\d\\d:\\d\\d:\\d\\d,\\d\\d\\d --> \\d\\d:\\d\\d:\\d\\d,\\d\\d\\d") // looks horrible, change later
 	latestTimestamp := ""
 
-	file, err := os.Open("superbad.srt")
+	file, err := os.Open(os.Getenv("CAPTION_FILE"))
 	defer file.Close()
 
 	if err != nil {
@@ -44,5 +49,17 @@ func main() {
 				break
 			}
 		}
+	}
+}
+
+func runVideo() {
+	cmd := exec.Command("vlc", os.Getenv("TRAINING_DAY"))
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(fmt.Sprint(err) + ": " + stderr.String())
 	}
 }

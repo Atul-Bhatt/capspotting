@@ -1,2 +1,5 @@
 caption.txt
 *.srt
+.env
+*.mkv
+*.mp4
