@@ -23,7 +23,7 @@ func main() {
 	//runVideo()
 
 	// regular expression to match timestamp
-	timestampRegex, _ := regexp.Compile("\\d\\d:\\d\\d:\\d\\d,\\d\\d\\d --> \\d\\d:\\d\\d:\\d\\d,\\d\\d\\d") // looks horrible, change later
+	timestampRegex, _ := regexp.Compile("\\d{2}:\\d{2}:\\d{2},\\d{3} --> \\d{2}:\\d{2}:\\d{2},\\d{3}")
 	latestTimestamp := ""
 
 	file, err := os.Open(os.Getenv("CAPTION_FILE"))
