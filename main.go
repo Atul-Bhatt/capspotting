@@ -10,6 +10,7 @@ import (
 	"strings"
 	"regexp"
 	_ "github.com/joho/godotenv/autoload"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 /* -- subtitle format --
@@ -46,6 +47,7 @@ func main() {
 			if strings.Contains(lines.Text(), input.Text()) {
 				fmt.Println(latestTimestamp)
 				fmt.Println(lines.Text())
+				clipVideo(latestTimestamp)
 				break
 			}
 		}
@@ -62,4 +64,12 @@ func runVideo() {
 	if err != nil {
 		log.Fatal(fmt.Sprint(err) + ": " + stderr.String())
 	}
+}
+
+func clipVideo(latestTimestamp string) {
+	_ = ffmpeg.
+		Input(os.Getenv("TRAINING_DAY"), ffmpeg.KwArgs{"ss": 1}).
+		Output("out1.mp4", ffmpeg.KwArgs{"t": 1}).
+		OverWriteOutput().
+		Run()
 }
