@@ -49,6 +49,7 @@ func main() {
 				fmt.Println(latestTimestamp)
 				fmt.Println(lines.Text())
 				clipVideo(latestTimestamp)
+				runVideo()
 				break
 			}
 		}
@@ -56,7 +57,7 @@ func main() {
 }
 
 func runVideo() {
-	cmd := exec.Command("vlc", os.Getenv("TRAINING_DAY"))
+	cmd := exec.Command("vlc", "out.mp4")
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
@@ -70,10 +71,15 @@ func runVideo() {
 // -to <time_stop> stop transcoding after specified time is reached
 func clipVideo(latestTimestamp string) {
 	seconds := timestampToSeconds(latestTimestamp[0:8])
-	fmt.Println(seconds)
+
+	// subtract 1 seconds for better clipping
+	if seconds >= 1 {
+		seconds -= 1 
+	}
+
 	_ = ffmpeg.
 		Input(os.Getenv("TRAINING_DAY"), ffmpeg.KwArgs{"ss": seconds}). // -ss <time_off> start transcoding at specified time
-		Output("out2.mp4", ffmpeg.KwArgs{"t": 3}). // -t <duration> stop transcoding after specified duration 
+		Output("out.mp4", ffmpeg.KwArgs{"t": 5}). // -t <duration> stop transcoding after specified duration 
 		OverWriteOutput().
 		Run()
 }
@@ -83,7 +89,6 @@ func timestampToSeconds(timestamp string) int64 {
 	hours, _ := strconv.ParseInt(timestamp[0:2], 10, 32)
 	minutes, _ := strconv.ParseInt(timestamp[3:5], 10, 32)
 	seconds, _ := strconv.ParseInt(timestamp[6:8], 10, 32)
-	fmt.Printf("%d, %d, %d\n", hours, minutes, seconds)
 
 	return ((hours*3600) + (minutes*60) + seconds)
 }
