@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"fmt"
 	"strings"
+	"strconv"
 	"regexp"
 	_ "github.com/joho/godotenv/autoload"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
@@ -66,10 +67,23 @@ func runVideo() {
 	}
 }
 
+// -to <time_stop> stop transcoding after specified time is reached
 func clipVideo(latestTimestamp string) {
+	seconds := timestampToSeconds(latestTimestamp[0:8])
+	fmt.Println(seconds)
 	_ = ffmpeg.
-		Input(os.Getenv("TRAINING_DAY"), ffmpeg.KwArgs{"ss": 1}).
-		Output("out1.mp4", ffmpeg.KwArgs{"t": 1}).
+		Input(os.Getenv("TRAINING_DAY"), ffmpeg.KwArgs{"ss": seconds}). // -ss <time_off> start transcoding at specified time
+		Output("out2.mp4", ffmpeg.KwArgs{"t": 3}). // -t <duration> stop transcoding after specified duration 
 		OverWriteOutput().
 		Run()
+}
+
+func timestampToSeconds(timestamp string) int64 {
+//00:00:02,462 --> 00:00:02,493
+	hours, _ := strconv.ParseInt(timestamp[0:2], 10, 32)
+	minutes, _ := strconv.ParseInt(timestamp[3:5], 10, 32)
+	seconds, _ := strconv.ParseInt(timestamp[6:8], 10, 32)
+	fmt.Printf("%d, %d, %d\n", hours, minutes, seconds)
+
+	return ((hours*3600) + (minutes*60) + seconds)
 }
