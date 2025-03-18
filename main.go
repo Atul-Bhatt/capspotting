@@ -1,16 +1,19 @@
 package main
 
 import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-/* -- subtitle format --
-43
-00:00:02,462 --> 00:00:02,493
-Evan told me
-you didn't get into Dartmouth.
-*/
-
 func main() {
-	scanCaption()
+	r := gin.New()
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "capspotting")
+	})
+
+	r.Run(":8080")
+	//scanCaption()
 }
 
